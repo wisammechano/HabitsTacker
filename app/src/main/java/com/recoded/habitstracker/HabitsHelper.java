@@ -28,7 +28,7 @@ public class HabitsHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE " + HabitsContract.TABLE_NAME
-                + "(" + TasksTable.ID + " INTEGER PRIMARY KEY,"
+                + "(" + TasksTable._ID + " INTEGER PRIMARY KEY,"
                 + TasksTable.TITLE + " TEXT,"
                 + TasksTable.BODY + " TEXT,"
                 + TasksTable.DONE + " INTEGER,"

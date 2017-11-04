@@ -20,6 +20,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     HabitsHelper dbHelper;
+    SQLiteDatabase db;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,35 +33,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readTasks() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.query(HabitsContract.TABLE_NAME, TasksTable.ALL_FIELDS, null, null, null, null, TasksTable.TITLE);
+        cursor = getCursor();
         ArrayList<Habit> habits = new ArrayList<>();
 
-        while (c.moveToNext()){
-            String title = c.getString(c.getColumnIndex(TasksTable.TITLE));
-            String body = c.getString(c.getColumnIndex(TasksTable.BODY));
-            boolean done = c.getInt(c.getColumnIndex(TasksTable.DONE)) != 0;
+        while (cursor.moveToNext()) {
+            String title = cursor.getString(cursor.getColumnIndex(TasksTable.TITLE));
+            String body = cursor.getString(cursor.getColumnIndex(TasksTable.BODY));
+            boolean done = cursor.getInt(cursor.getColumnIndex(TasksTable.DONE)) != 0;
 
             Habit habit = new Habit(title, body, done);
 
-            habit.setLastModified(c.getString(c.getColumnIndex(TasksTable.LAST_MODIFIED)));
-            habit.setDoneOn(c.getString(c.getColumnIndex(TasksTable.DONE_ON)));
-            habit.setId(c.getInt(c.getColumnIndex(TasksTable.ID)));
-            habit.setCreatedOn(c.getString(c.getColumnIndex(TasksTable.CREATED_ON)));
+            habit.setLastModified(cursor.getString(cursor.getColumnIndex(TasksTable.LAST_MODIFIED)));
+            habit.setDoneOn(cursor.getString(cursor.getColumnIndex(TasksTable.DONE_ON)));
+            habit.setId(cursor.getInt(cursor.getColumnIndex(TasksTable._ID)));
+            habit.setCreatedOn(cursor.getString(cursor.getColumnIndex(TasksTable.CREATED_ON)));
 
             habits.add(habit);
         }
-        c.close();
-        db.close();
+    }
+
+
+    private Cursor getCursor() {
+        db = dbHelper.getReadableDatabase();
+        return db.query(HabitsContract.TABLE_NAME, TasksTable.ALL_FIELDS, null, null, null, null, TasksTable.TITLE);
     }
 
     private void insertNewTask(int count) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
         while (count >=0){
             Habit habit = new Habit("Habit" + count, "This is a test body for habit no." + count, count % 2 == 0);
             db.insert(HabitsContract.TABLE_NAME, null, habit.getInsertContentValues());
             count--;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cursor.close();
         db.close();
     }
 }

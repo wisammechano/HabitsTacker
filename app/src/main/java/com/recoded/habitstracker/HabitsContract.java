@@ -22,7 +22,6 @@ public final class HabitsContract {
     }
 
     public static class TasksTable implements BaseColumns{
-        public final static String ID = BaseColumns._ID;
         public final static String TITLE = "title";
         public final static String BODY = "body";
         public final static String DONE = "done";
@@ -30,7 +29,7 @@ public final class HabitsContract {
         public final static String DONE_ON = "doneOn";
         public final static String CREATED_ON = "createdOn";
 
-        public final static String[] ALL_FIELDS = {ID, TITLE, BODY, DONE, DONE_ON, LAST_MODIFIED, CREATED_ON};
+        public final static String[] ALL_FIELDS = {_ID, TITLE, BODY, DONE, DONE_ON, LAST_MODIFIED, CREATED_ON};
 
     }
 }

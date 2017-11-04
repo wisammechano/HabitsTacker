@@ -6,7 +6,7 @@
  * Last modified on 11/4/17 10:43 AM
  */
 
-package com.recoded.tasksnotifier;
+package com.recoded.habitstracker;
 
 import android.provider.BaseColumns;
 
@@ -14,10 +14,12 @@ import android.provider.BaseColumns;
  * Created by wisam on Nov 4 17.
  */
 
-public final class TasksContract {
+public final class HabitsContract {
 
-    public static final String TABLE_NAME = "tasks";
-    private TasksContract(){}
+    public static final String TABLE_NAME = "habits";
+
+    private HabitsContract() {
+    }
 
     public static class TasksTable implements BaseColumns{
         public final static String ID = BaseColumns._ID;

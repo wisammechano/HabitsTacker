@@ -6,7 +6,7 @@
  * Last modified on 11/4/17 11:12 AM
  */
 
-package com.recoded.tasksnotifier;
+package com.recoded.habitstracker;
 
 import android.content.ContentValues;
 import android.os.Parcel;
@@ -23,19 +23,29 @@ import java.util.Locale;
  * Created by wisam on Nov 4 17.
  */
 
-public class Task implements Parcelable {
+public class Habit implements Parcelable {
+    public static final Parcelable.Creator<Habit> CREATOR = new Parcelable.Creator<Habit>() {
+        @Override
+        public Habit createFromParcel(Parcel source) {
+            return new Habit(source);
+        }
+
+        @Override
+        public Habit[] newArray(int size) {
+            return new Habit[size];
+        }
+    };
+    private final static String DATE_FORMAT = "EEE, MMM dd, yyyy";
+    private final static String TIME_FORMAT = " 'at' HH:mm:ss";
     private int id;
     private String title;
     private String body;
     private boolean done;
     private Date doneOn, lastModified, createdOn;
     private ContentValues cvs;
-
-    private final static String DATE_FORMAT = "EEE, MMM dd, yyyy";
-    private final static String TIME_FORMAT = " 'at' HH:mm:ss";
     private DateFormat df;
 
-    public Task(String title, String body, boolean done) {
+    public Habit(String title, String body, boolean done) {
         this.title = title;
         this.body = body;
         this.id = 0;
@@ -45,6 +55,35 @@ public class Task implements Parcelable {
         this.lastModified = this.createdOn;
         cvs = new ContentValues();
         df = new SimpleDateFormat(DATE_FORMAT + TIME_FORMAT, Locale.US);
+    }
+
+    protected Habit(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.body = in.readString();
+        this.done = in.readByte() != 0;
+        long tmpDoneOn = in.readLong();
+        this.doneOn = tmpDoneOn == -1 ? null : new Date(tmpDoneOn);
+        long tmpLastModified = in.readLong();
+        this.lastModified = tmpLastModified == -1 ? null : new Date(tmpLastModified);
+        long tmpCreatedOn = in.readLong();
+        this.createdOn = tmpCreatedOn == -1 ? null : new Date(tmpCreatedOn);
+        this.cvs = in.readParcelable(ContentValues.class.getClassLoader());
+        this.df = (DateFormat) in.readSerializable();
+    }
+
+    public static String getFriendlyTimeStamp(Date date) {
+        long currentTime = Calendar.getInstance().getTime().getTime();
+        DateFormat df = new SimpleDateFormat(TIME_FORMAT, Locale.US);
+        String time = df.format(date);
+        long diff = currentTime - date.getTime();
+
+        if (diff < (24 * 3600 * 1000)) {
+            return "Today" + time;
+        } else if (diff < (48 * 3600 * 1000)) {
+            return "Yesterday" + time;
+        }
+        return null;
     }
 
     public int getId() {
@@ -136,27 +175,13 @@ public class Task implements Parcelable {
     }
 
     public ContentValues getInsertContentValues() {
-        cvs.put(TasksContract.TasksTable.TITLE, getTitle());
-        cvs.put(TasksContract.TasksTable.BODY, getBody());
-        cvs.put(TasksContract.TasksTable.DONE, isDone());
-        cvs.put(TasksContract.TasksTable.DONE_ON, getDoneOn(false));
-        cvs.put(TasksContract.TasksTable.LAST_MODIFIED, getLastModified(false));
-        cvs.put(TasksContract.TasksTable.CREATED_ON, getCreatedOn(false));
+        cvs.put(HabitsContract.TasksTable.TITLE, getTitle());
+        cvs.put(HabitsContract.TasksTable.BODY, getBody());
+        cvs.put(HabitsContract.TasksTable.DONE, isDone());
+        cvs.put(HabitsContract.TasksTable.DONE_ON, getDoneOn(false));
+        cvs.put(HabitsContract.TasksTable.LAST_MODIFIED, getLastModified(false));
+        cvs.put(HabitsContract.TasksTable.CREATED_ON, getCreatedOn(false));
         return cvs;
-    }
-
-    public static String getFriendlyTimeStamp(Date date) {
-        long currentTime = Calendar.getInstance().getTime().getTime();
-        DateFormat df = new SimpleDateFormat(TIME_FORMAT, Locale.US);
-        String time = df.format(date);
-        long diff = currentTime - date.getTime();
-
-        if (diff < (24 * 3600 * 1000)) {
-            return "Today" + time;
-        } else if (diff < (48 * 3600 * 1000)) {
-            return "Yesterday" + time;
-        }
-        return null;
     }
 
     @Override
@@ -176,31 +201,4 @@ public class Task implements Parcelable {
         dest.writeParcelable(this.cvs, flags);
         dest.writeSerializable(this.df);
     }
-
-    protected Task(Parcel in) {
-        this.id = in.readInt();
-        this.title = in.readString();
-        this.body = in.readString();
-        this.done = in.readByte() != 0;
-        long tmpDoneOn = in.readLong();
-        this.doneOn = tmpDoneOn == -1 ? null : new Date(tmpDoneOn);
-        long tmpLastModified = in.readLong();
-        this.lastModified = tmpLastModified == -1 ? null : new Date(tmpLastModified);
-        long tmpCreatedOn = in.readLong();
-        this.createdOn = tmpCreatedOn == -1 ? null : new Date(tmpCreatedOn);
-        this.cvs = in.readParcelable(ContentValues.class.getClassLoader());
-        this.df = (DateFormat) in.readSerializable();
-    }
-
-    public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
-        @Override
-        public Task createFromParcel(Parcel source) {
-            return new Task(source);
-        }
-
-        @Override
-        public Task[] newArray(int size) {
-            return new Task[size];
-        }
-    };
 }

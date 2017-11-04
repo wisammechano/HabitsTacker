@@ -13,7 +13,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.recoded.tasksnotifier.MainActivity">
+    tools:context="com.recoded.habitstracker.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"

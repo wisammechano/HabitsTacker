@@ -1,4 +1,4 @@
-package com.recoded.tasksnotifier;
+package com.recoded.habitstracker;
 
 import org.junit.Test;
 

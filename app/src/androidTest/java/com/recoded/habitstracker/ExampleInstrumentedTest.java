@@ -1,4 +1,4 @@
-package com.recoded.tasksnotifier;
+package com.recoded.habitstracker;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.recoded.tasksnotifier", appContext.getPackageName());
+        assertEquals("com.recoded.habitstracker", appContext.getPackageName());
     }
 }
